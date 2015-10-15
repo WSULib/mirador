@@ -222,19 +222,24 @@
     onDrawFinish: function(canvasRect) {
       var _this = this,
       parent = this.parent,
-      annoTooltip = new $.AnnotationTooltip(); //pass permissions
+      annoTooltip = new $.AnnotationTooltip({"windowId" : _this.parent.windowId}); //pass permissions
       var tooltip = jQuery(this.osdOverlay).qtip({
            content: {
-            text : annoTooltip.editorTemplate()
+            text : annoTooltip.getEditor({})
             },
             position : {
               my: 'bottom left',
               at: 'top right',
-              viewport: true,
               adjust : {
                 method: 'flipinvert'
               },
-              container: jQuery(_this.osdViewer.element)
+              //when the side panel is active and visible, it messes up the offset for the qtip
+              //which means that qtips will disappear for annotations that are on the far right side of the canvas
+              //so we need the container and viewport to be the element that encompasses everything,
+              //which can be the window or slot.  we need a better way of getting this element
+              //because this is brittle
+              container: _this.parent.parent.parent.element, //window's element
+              viewport: _this.parent.parent.parent.element //window's element
             },
             style : {
               classes : 'qtip-bootstrap'
@@ -250,14 +255,18 @@
             events: {
               render: function(event, api) {
               
+                jQuery.publish('annotationEditorAvailable.'+parent.windowId);
+
                 //disable all tooltips for overlays
                 jQuery.publish('disableTooltips.'+parent.windowId);
                 //disable zooming
                 _this.osdViewer.zoomPerClick = 1;
                 _this.osdViewer.zoomPerScroll = 1;
 
+                var selector = '#annotation-editor-'+parent.windowId;
+
                 tinymce.init({
-                  selector : 'form.annotation-tooltip textarea',
+                  selector : selector+' textarea',
                   plugins: "image link media",
                   menubar: false,
                   statusbar: false,
@@ -270,12 +279,12 @@
                   }
                 });
 
-                jQuery('.annotation-tooltip').on("submit", function(event) {
+                jQuery(selector).on("submit", function(event) {
                   event.preventDefault();
-                  jQuery('.annotation-tooltip a.save').click();
+                  jQuery(selector+' a.save').click();
                 });
               
-                jQuery('.annotation-tooltip a.cancel').on("click", function(event) {
+                jQuery(selector+' a.cancel').on("click", function(event) {
                   event.preventDefault();
                   //add check so that dialog box only pops up if there is stuff in the editor
                   var content = tinymce.activeEditor.getContent();
@@ -293,7 +302,7 @@
                   _this.osdViewer.zoomPerScroll = 1.2;                  
                 });
                 
-                jQuery('.annotation-tooltip a.save').on("click", function(event) {
+                jQuery(selector+' a.save').on("click", function(event) {
                   event.preventDefault();
                   var tagText = jQuery(this).parents('.annotation-editor').find('.tags-editor').val(),
                   resourceText = tinymce.activeEditor.getContent(),

@@ -531,16 +531,34 @@ li.highlight {
   overflow:hidden;
   pointer-events: none;
 }
-.slot:hover {
+.slot:hover, .slot.focused, .slot.draggedOver {
   box-shadow: inset 0 0 35px rgba(94, 219, 255, 1);
 }
+.slot.draggedOver .dropMeMessage, .slot.draggedOver .dropIcon {
+    display:block;
+}
+.dropMeMessage, .dropIcon {
+    display:none;
+}
+.slot.draggedOver .addItemText, .slot.draggedOver .plus span {
+    display:none;
+}
 .addItemLink {
+    display:block;
+    position:absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    cursor: pointer;
+}
+.dropMask {
   position:absolute;
   top:0;
   bottom:0;
   right:0;
   left:0;
-  cursor: pointer;
+  display:none;
 }
 
 /* window scaffolding */
@@ -888,9 +906,9 @@ li.highlight {
 }
 .mirador-osd-annotations-layer {
   position:absolute;
-  bottom:0;
-  left:0;
-  margin: 1%;
+  top: 10px;
+  left: 10px;
+  transition: none;
 }
 .mirador-osd-toggle-bottom-panel {
   position: absolute;
@@ -951,9 +969,9 @@ li.highlight {
 }
 .mirador-osd-context-controls {
   position: absolute;
-  top:0;
-  left:0;
-  margin: 15px;
+  top: 10px;
+  left: 10px;
+  transition: none;
 }
 .mirador-osd-context-controls a {
   float:left;
@@ -1554,7 +1572,7 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   clear: both;
 }
 .qtip-content {
-  min-width: 200px;
+  min-width: 275px;
   max-height: 200px;
   overflow: auto;
 }
@@ -1568,6 +1586,9 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   padding: 12px;
   padding-bottom:0;
   border-bottom: 1px solid gray;
+}
+.annotation-display:last-child {
+    border: none;
 }
 .annotation-tooltip .button-container {
   text-align: right;
@@ -1630,6 +1651,7 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   font-size: 12;
   font-weight: bold;
   border: 1px solid #aaa;
+  display: inline-block;
 }
 
 .mce-edit-area iframe {
