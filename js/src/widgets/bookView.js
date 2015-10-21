@@ -22,7 +22,7 @@
       },
       parent:           null,
       stitchTileMargin: 10
-    }, options);
+    }, $.DEFAULT_SETTINGS, options);
 
     this.init();
   };
@@ -161,10 +161,13 @@
         .attr('id', osdId)
         .appendTo(_this.element);
 
-        _this.osd = $.OpenSeadragon({
+        // fold passed values with locally defined
+        var osd_options = {};
+        jQuery.extend(osd_options,{
           'id':           elemOsd.attr('id'),
           'toolbarID' : toolbarID
-        });
+        }, _this.openSeadragon);
+        _this.osd = $.OpenSeadragon(osd_options);
 
         _this.osd.addHandler('open', function(){
           _this.addLayer(tileSources.slice(1), aspectRatio);
