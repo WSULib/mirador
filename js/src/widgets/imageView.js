@@ -23,21 +23,22 @@
       annoCls:          'annotation-canvas',
       annotationLayerAvailable: null,
       annotationsLayer: null 
-    }, options);
+    }, $.DEFAULT_SETTINGS, options);    
 
     this.init();
   };
 
   $.ImageView.prototype = {
 
-    init: function() {    
+    init: function() {
+
       // check (for thumbnail view) if the canvasID is set. 
       // If not, make it page/item 1.
       if (this.canvasID !== null) {
         this.currentImgIndex = $.getImageIndexById(this.imagesList, this.canvasID);
       }
 
-      if (!this.osdOptions) {
+      if (!this.osdOptions) {        
         this.osdOptions = {
           osdBounds:        null,
           zoomLevel:        null
@@ -146,11 +147,14 @@
         .attr('id', osdID)
         .appendTo(_this.element);
 
-        _this.osd = $.OpenSeadragon({
+        // fold passed values with locally defined
+        var osd_options = {};
+        jQuery.extend(osd_options,{
           'id':           osdID,
           'tileSources':  infoJson,
-          'uniqueID' : uniqueID
-        });
+          'uniqueID' : uniqueID,
+        }, _this.openSeadragon);
+        _this.osd = $.OpenSeadragon(osd_options);
 
         _this.osd.addHandler('open', function(){
           if (_this.osdOptions.osdBounds) {

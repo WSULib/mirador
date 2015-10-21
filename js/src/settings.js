@@ -132,7 +132,13 @@
     'lockController' : {
       'lockProfile' : 'lazyZoom',
       'notifyMaxMin' : true
+    },
+
+    // OpenSeadragon configuration
+    'openSeadragon' : {
+      'visibilityRatio' : 0.1
     }
+
   };
 
 }(Mirador));
